@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Comercial e Atendimento | Escrita Contabilidade</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --azul: #0B2D5C;
+      --azul-2: #123E78;
+      --azul-3: #1E5AA6;
+      --dourado: #B98B1D;
+      --dourado-2: #D4A437;
+      --branco: #FFFFFF;
+      --gelo: #F5F7FA;
+      --cinza: #6B7280;
+      --texto: #102033;
+      --borda: #DDE3EA;
+      --verde: #0B7A4B;
+      --vermelho: #B91C1C;
+      --sombra: 0 18px 45px rgba(9, 30, 66, 0.10);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--gelo);
+      color: var(--texto);
+      line-height: 1.55;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: 76px;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--borda);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--azul);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      position: relative;
+      flex: 0 0 42px;
+    }
+    .logo-mark:before,
+    .logo-mark:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 38px;
+      height: 11px;
+      transform: skewY(-18deg);
+      border-radius: 2px;
+    }
+    .logo-mark:before { top: 5px; background: var(--dourado); }
+    .logo-mark:after { top: 24px; background: linear-gradient(90deg, var(--azul-3), var(--azul)); }
+    .brand small {
+      display: block;
+      font-size: 11px;
+      letter-spacing: .35em;
+      color: var(--dourado);
+      margin-top: -4px;
+    }
+
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+    button, .btn {
+      border: 0;
+      background: var(--azul);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(11,45,92,.16);
+      transition: transform .16s ease, background .16s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    button:hover, .btn:hover { transform: translateY(-1px); background: var(--azul-2); }
+    .btn-gold { background: linear-gradient(135deg, var(--dourado), var(--dourado-2)); color: white; }
+    .btn-gold:hover { background: linear-gradient(135deg, #987016, var(--dourado)); }
+    .btn-outline { background: white; color: var(--azul); border: 1px solid var(--borda); box-shadow: none; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr);
+      min-height: calc(100vh - 76px);
+    }
+
+    aside {
+      position: sticky;
+      top: 76px;
+      height: calc(100vh - 76px);
+      overflow-y: auto;
+      background: white;
+      border-right: 1px solid var(--borda);
+      padding: 22px 18px;
+    }
+
+    aside h3 {
+      color: var(--azul);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin: 8px 0 14px;
+    }
+
+    .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--azul);
+      text-decoration: none;
+      padding: 10px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+    .navlink:hover { background: #EEF4FB; }
+    .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--azul);
+      color: white;
+      font-size: 12px;
+      flex: 0 0 24px;
+    }
+
+    main { padding: 26px; }
+
+    section {
+      min-height: calc(100vh - 128px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 46px;
+      background: white;
+      border: 1px solid var(--borda);
+      border-radius: 22px;
+      box-shadow: var(--sombra);
+      margin-bottom: 28px;
+      scroll-margin-top: 104px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    section.compact { min-height: auto; }
+
+    .hero {
+      background: radial-gradient(circle at 86% 24%, rgba(212,164,55,.25), transparent 28%),
+                  linear-gradient(135deg, #FFFFFF 0%, #F7FAFF 50%, #EEF4FB 100%);
+    }
+    .hero:after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      bottom: -110px;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--azul), var(--azul-3));
+      opacity: .95;
+    }
+    .hero:before {
+      content: "";
+      position: absolute;
+      right: 120px;
+      bottom: -80px;
+      width: 95px;
+      height: 420px;
+      background: linear-gradient(180deg, var(--dourado), var(--dourado-2));
+      transform: rotate(36deg);
+      z-index: 1;
+      border-radius: 36px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 760px; }
+
+    .eyebrow {
+      color: var(--dourado);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      color: var(--azul);
+      font-size: clamp(44px, 6vw, 78px);
+      line-height: .98;
+      letter-spacing: -.04em;
+      margin-bottom: 18px;
+    }
+    h2 {
+      color: var(--azul);
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -.03em;
+      margin-bottom: 16px;
+    }
+    h3 { color: var(--azul); font-size: 22px; margin-bottom: 10px; }
+    h4 { color: var(--dourado); font-size: 18px; margin-bottom: 8px; }
+    p { font-size: 18px; color: #27364A; margin-bottom: 10px; }
+    ul, ol { padding-left: 22px; margin: 10px 0; }
+    li { margin-bottom: 6px; font-size: 17px; }
+    strong { color: var(--azul); }
+
+    .subtitle { font-size: 24px; color: var(--azul); max-width: 780px; }
+    .gold { color: var(--dourado); font-weight: 800; }
+    .divider { width: 170px; height: 3px; background: var(--dourado); margin: 24px 0; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid var(--borda);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 8px 24px rgba(9, 30, 66, 0.06);
+    }
+    .card.blue { background: linear-gradient(135deg, var(--azul), var(--azul-2)); color: white; }
+    .card.blue h3, .card.blue h4, .card.blue p, .card.blue li, .card.blue strong { color: white; }
+    .card.gold { background: linear-gradient(135deg, #FFF9EA, #FFFFFF); border-color: rgba(185,139,29,.35); }
+    .card.warning { border-left: 8px solid var(--dourado); }
+    .card.danger { border-left: 8px solid var(--vermelho); }
+    .card.success { border-left: 8px solid var(--verde); }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      background: #EEF4FB;
+      color: var(--azul);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 13px;
+      margin: 4px 5px 4px 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .step {
+      background: #F8FAFC;
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      padding: 18px;
+      position: relative;
+    }
+    .step b {
+      color: var(--azul);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .step small { color: var(--cinza); font-weight: 700; text-transform: uppercase; }
+
+    .script-box {
+      background: #F8FAFC;
+      border: 1px solid var(--borda);
+      border-radius: 16px;
+      padding: 22px;
+      margin: 16px 0;
+      font-size: 18px;
+    }
+    .script-box em { color: var(--dourado); font-style: normal; font-weight: 800; }
+
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 14px; background: white; border-radius: 14px; overflow: hidden; }
+    th, td { border: 1px solid var(--borda); padding: 13px; text-align: left; font-size: 15px; vertical-align: top; }
+    th { background: var(--azul); color: white; }
+    td:first-child { font-weight: 700; color: var(--azul); }
+
+    .callout {
+      background: linear-gradient(90deg, rgba(11,45,92,.08), rgba(212,164,55,.09));
+      border-left: 6px solid var(--dourado);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .footer-note {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--borda);
+      font-size: 14px;
+      color: var(--cinza);
+    }
+
+    .mobile-menu { display: none; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { display: none; }
+      .mobile-menu { display: inline-flex; }
+      main { padding: 14px; }
+      section { padding: 28px 20px; border-radius: 16px; min-height: auto; }
+      .grid-2, .grid-3, .flow { grid-template-columns: 1fr; }
+      .topbar { padding: 0 14px; }
+      .brand div:last-child { font-size: 13px; }
+      .top-actions .desktop-only { display: none; }
+    }
+
+    @media print {
+      .topbar, aside, .section-actions { display: none !important; }
+      .layout { display: block; }
+      main { padding: 0; }
+      section { page-break-after: always; box-shadow: none; border: none; min-height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo-mark"></div>
+      <div>Escrita<br><small>Contabilidade</small></div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-outline mobile-menu" onclick="document.querySelector('aside').style.display = document.querySelector('aside').style.display === 'block' ? 'none' : 'block'">Menu</button>
+      <button class="btn-outline desktop-only" onclick="window.print()">Imprimir apresentação</button>
+      <button class="btn-gold" onclick="baixarPDF('todos')">Baixar todos os scripts em PDF</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <h3>Navegação</h3>
+      <a class="navlink" href="#inicio"><span class="num">1</span> Início</a>
+      <a class="navlink" href="#cenario"><span class="num">2</span> Cenário atual</a>
+      <a class="navlink" href="#objetivo"><span class="num">3</span> Objetivo do comercial</a>
+      <a class="navlink" href="#classificacao"><span class="num">4</span> Smart x Consultivo</a>
+      <a class="navlink" href="#fluxo"><span class="num">5</span> Fluxo comercial</a>
+      <a class="navlink" href="#ligacao"><span class="num">6</span> Script de ligação</a>
+      <a class="navlink" href="#perguntas"><span class="num">7</span> Perguntas estratégicas</a>
+      <a class="navlink" href="#direcionamento"><span class="num">8</span> Direcionamento do lead</a>
+      <a class="navlink" href="#reuniao1"><span class="num">9</span> Reunião 1</a>
+      <a class="navlink" href="#reuniao2"><span class="num">10</span> Reunião 2</a>
+      <a class="navlink" href="#objecoes"><span class="num">11</span> Objeções</a>
+      <a class="navlink" href="#regras"><span class="num">12</span> Regras de ouro</a>
+      <a class="navlink" href="#kpis"><span class="num">13</span> KPI's</a>
+      <a class="navlink" href="#implantacao"><span class="num">14</span> Implantação</a>
+      <br>
+      <button style="width:100%; justify-content:center;" onclick="baixarPDF('ligacao')">PDF: ligação</button>
+      <br><br>
+      <button style="width:100%; justify-content:center;" class="btn-gold" onclick="baixarPDF('todos')">PDF: todos</button>
+    </aside>
+
+    <main>
+      <section id="inicio" class="hero">
+        <div class="hero-content">
+          <div class="eyebrow">Manual Comercial e Atendimento</div>
+          <h1>Treinamento Comercial</h1>
+          <p class="subtitle"><strong>Escrita Contabilidade</strong>: atendimento consultivo, qualificação inteligente e condução estratégica de propostas.</p>
+          <div class="divider"></div>
+          <p>Material para treinamento do Diretor Comercial Rodrigo e padronização da entrada de novos colaboradores.</p>
+          <p><span class="gold">Ideia central:</span> diagnosticar antes de vender. Conduzir antes de precificar.</p>
+          <div class="section-actions">
+            <button onclick="baixarPDF('todos')">Baixar todos os scripts em PDF</button>
+            <button class="btn-outline" onclick="location.href='#ligacao'">Ir para script de ligação</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="cenario">
+        <div class="eyebrow">Ponto de partida</div>
+        <h2>Cenário atual: atendimento passivo</h2>
+        <div class="grid-2">
+          <div class="card danger">
+            <h3>O que acontece hoje</h3>
+            <ul>
+              <li>O cliente chama e a equipe apenas responde.</li>
+              <li>A conversa começa em preço, prazo ou troca de contador.</li>
+              <li>Não há roteiro para qualificar o potencial do lead.</li>
+              <li>Propostas podem ser enviadas cedo demais.</li>
+              <li>Clientes diferentes recebem condução parecida.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <h3>Risco comercial</h3>
+            <p>Quando a Escrita entra rápido demais em preço, o cliente compara apenas honorário. Isso transforma um serviço técnico, consultivo e de confiança em uma mercadoria.</p>
+            <div class="callout"><strong>Correção:</strong> usar perguntas para descobrir porte, dor, urgência, capacidade de decisão e complexidade antes de propor.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="objetivo">
+        <div class="eyebrow">Novo papel do comercial</div>
+        <h2>O comercial não é tirador de preço</h2>
+        <p>O papel do Rodrigo e da equipe é conduzir o cliente por um processo simples, consultivo e previsível.</p>
+        <div class="grid-3">
+          <div class="card"><h3>1. Diagnosticar</h3><p>Entender cenário, porte, problema real e urgência.</p></div>
+          <div class="card"><h3>2. Classificar</h3><p>Separar leads pequenos para Smart e leads maiores para processo consultivo.</p></div>
+          <div class="card"><h3>3. Conduzir</h3><p>Definir se o próximo passo é proposta direta ou reunião de alinhamento.</p></div>
+        </div>
+        <div class="callout"><strong>Regra-mãe:</strong> cliente simples pode receber proposta mais objetiva. Cliente complexo precisa de reunião antes da proposta.</div>
+      </section>
+
+      <section id="classificacao">
+        <div class="eyebrow">Qualificação</div>
+        <h2>Dois caminhos: Lead Smart ou Lead Consultivo</h2>
+        <div class="grid-2">
+          <div class="card blue">
+            <h3>Lead Smart</h3>
+            <p>Cliente pequeno, menor complexidade, busca solução objetiva e tem baixa necessidade de diagnóstico aprofundado.</p>
+            <ul>
+              <li>Empresa pequena.</li>
+              <li>Poucos colaboradores.</li>
+              <li>Baixa complexidade fiscal/operacional.</li>
+              <li>Dor clara e simples.</li>
+              <li>Quer rapidez e objetividade.</li>
+            </ul>
+            <p><strong>Destino:</strong> proposta direta e padronizada.</p>
+          </div>
+          <div class="card gold">
+            <h3>Lead Consultivo</h3>
+            <p>Empresa com maior potencial, mais riscos, operação mais ampla ou necessidade de reposicionamento contábil/financeiro.</p>
+            <ul>
+              <li>Empresa média ou em crescimento.</li>
+              <li>Múltiplas dores.</li>
+              <li>Gestão financeira/fiscal desorganizada.</li>
+              <li>Decisão envolve sócios ou diretoria.</li>
+              <li>Potencial de ticket maior.</li>
+            </ul>
+            <p><strong>Destino:</strong> reunião de alinhamento, diagnóstico e proposta apresentada em reunião.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="fluxo">
+        <div class="eyebrow">Processo padrão</div>
+        <h2>Fluxo comercial recomendado</h2>
+        <div class="flow">
+          <div class="step"><small>Etapa 1</small><b>Entrada do lead</b><p>WhatsApp, site, indicação, Instagram, cliente atual ou parceiro.</p></div>
+          <div class="step"><small>Etapa 2</small><b>Contato inicial</b><p>Abertura consultiva e autorização para fazer perguntas.</p></div>
+          <div class="step"><small>Etapa 3</small><b>Qualificação</b><p>Porte, dor, urgência, decisão e complexidade.</p></div>
+          <div class="step"><small>Etapa 4</small><b>Direcionamento</b><p>Smart recebe proposta. Consultivo vai para reunião.</p></div>
+          <div class="step"><small>Etapa 5</small><b>Fechamento</b><p>Acompanhamento, proposta, negociação e decisão.</p></div>
+        </div>
+        <div class="callout"><strong>Ponto crítico:</strong> se o comercial não controla o fluxo, o cliente controla. E quando o cliente controla, a conversa tende a virar preço.</div>
+      </section>
+
+      <section id="ligacao">
+        <div class="eyebrow">Script operacional</div>
+        <h2>Roteiro de contato telefônico</h2>
+        <p>Objetivo da primeira ligação: criar confiança, entender o cenário e decidir o próximo passo correto.</p>
+        <div class="script-box">
+          <h3>Abertura padrão</h3>
+          <p>“Olá, tudo bem? Aqui é o Rodrigo da Escrita Contabilidade.</p>
+          <p>Recebi seu contato e, antes de te passar qualquer informação pronta, queria entender rapidamente o cenário da empresa para ver qual o melhor direcionamento para vocês. Pode ser?”</p>
+        </div>
+        <div class="grid-2">
+          <div class="card success">
+            <h3>Por que funciona</h3>
+            <ul>
+              <li>Pede permissão para conduzir.</li>
+              <li>Evita falar preço cedo.</li>
+              <li>Posiciona a Escrita como consultiva.</li>
+              <li>Mostra que a proposta depende do cenário.</li>
+            </ul>
+          </div>
+          <div class="card warning">
+            <h3>Evitar</h3>
+            <ul>
+              <li>“Qual serviço você quer?”</li>
+              <li>“Te mando a tabela.”</li>
+              <li>“Nosso honorário começa em...”</li>
+              <li>“Vou fazer qualquer proposta e te envio.”</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('ligacao')">Baixar script de ligação em PDF</button>
+        </div>
+      </section>
+
+      <section id="perguntas">
+        <div class="eyebrow">PNL aplicada com bom senso</div>
+        <h2>Perguntas estratégicas para identificar o perfil</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Bloco 1 — Contexto</h3>
+            <ul>
+              <li>Hoje quantos colaboradores a empresa possui?</li>
+              <li>Qual é a atividade principal da empresa?</li>
+              <li>Qual o regime tributário atual, se souber?</li>
+              <li>Vocês já possuem contabilidade atualmente?</li>
+              <li>O que motivou a busca por uma nova contabilidade agora?</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Bloco 2 — Dor</h3>
+            <ul>
+              <li>Qual é a maior dificuldade hoje: impostos, folha, financeiro, atendimento, rotina fiscal ou organização?</li>
+              <li>O que mais incomoda no atendimento atual?</li>
+              <li>Se isso continuar por mais 6 meses, qual impacto pode gerar?</li>
+              <li>O que precisa melhorar para você sentir segurança?</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Bloco 3 — Maturidade</h3>
+            <ul>
+              <li>Hoje a empresa trabalha de forma organizada ou mais apagando incêndio?</li>
+              <li>Vocês recebem relatórios gerenciais ou apenas guias e obrigações?</li>
+              <li>Existe acompanhamento de indicadores financeiros?</li>
+              <li>Vocês têm previsibilidade tributária ou são surpreendidos no mês?</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Bloco 4 — Decisão</h3>
+            <ul>
+              <li>Quem normalmente participa da decisão sobre contabilidade?</li>
+              <li>Existe algum prazo importante para troca ou regularização?</li>
+              <li>Além do preço, o que será decisivo para escolher o escritório?</li>
+              <li>Se fizer sentido, você prefere receber uma proposta objetiva ou marcar uma conversa para alinharmos melhor?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('perguntas')">Baixar perguntas em PDF</button>
+        </div>
+      </section>
+
+      <section id="direcionamento">
+        <div class="eyebrow">Tomada de decisão</div>
+        <h2>Como direcionar o lead depois das perguntas</h2>
+        <div class="grid-2">
+          <div class="card blue">
+            <h3>Se for Lead Smart</h3>
+            <p><strong>Sinais:</strong></p>
+            <ul>
+              <li>Empresa pequena.</li>
+              <li>Dor simples.</li>
+              <li>Baixa complexidade.</li>
+              <li>Busca proposta objetiva.</li>
+            </ul>
+            <div class="script-box" style="background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25);">
+              <p>“Perfeito. Pelo que você me explicou, acredito que conseguimos montar algo mais direto e objetivo para vocês. Vou organizar as informações e te enviar uma proposta inicial para avaliação, tudo bem?”</p>
+            </div>
+          </div>
+          <div class="card gold">
+            <h3>Se for Lead Consultivo</h3>
+            <p><strong>Sinais:</strong></p>
+            <ul>
+              <li>Múltiplas dores.</li>
+              <li>Crescimento desorganizado.</li>
+              <li>Decisão com sócios/diretoria.</li>
+              <li>Potencial maior de contrato.</li>
+            </ul>
+            <div class="script-box">
+              <p>“Pelo cenário que você me trouxe, acredito que antes de qualquer proposta pronta vale fazermos uma reunião de alinhamento. Assim entendemos melhor a operação e montamos algo realmente adequado para a empresa.”</p>
+            </div>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('direcionamento')">Baixar direcionamento em PDF</button>
+        </div>
+      </section>
+
+      <section id="reuniao1">
+        <div class="eyebrow">Primeira reunião</div>
+        <h2>Reunião 1 — Alinhamento e diagnóstico</h2>
+        <p>Objetivo: entender a empresa, aprofundar as dores e construir valor antes de falar de proposta.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Estrutura da reunião</h3>
+            <ol>
+              <li>História da empresa: atividade, momento atual e objetivos.</li>
+              <li>Rotina contábil atual: o que funciona e o que não funciona.</li>
+              <li>Financeiro e gestão: relatórios, previsibilidade, indicadores e tomada de decisão.</li>
+              <li>Obrigações fiscais e folha: riscos, atrasos, dúvidas e retrabalho.</li>
+              <li>Expectativa com a Escrita: resultado esperado, prazo e critério de sucesso.</li>
+            </ol>
+          </div>
+          <div class="card warning">
+            <h3>Fechamento da reunião</h3>
+            <div class="script-box">
+              <p>“Com base em tudo que levantamos hoje, vamos estruturar uma proposta alinhada ao cenário da empresa e marcar uma segunda reunião para apresentar as possibilidades com clareza.”</p>
+            </div>
+            <p><strong>Importante:</strong> não apresentar preço nessa reunião se o caso for consultivo.</p>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('reuniao1')">Baixar roteiro da reunião 1 em PDF</button>
+        </div>
+      </section>
+
+      <section id="reuniao2">
+        <div class="eyebrow">Segunda reunião</div>
+        <h2>Reunião 2 — Apresentação da proposta</h2>
+        <p>Objetivo: apresentar a solução como resposta ao diagnóstico, não como tabela de preço.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Sequência recomendada</h3>
+            <ol>
+              <li>Relembrar as dores que o cliente trouxe.</li>
+              <li>Mostrar os riscos de manter o cenário atual.</li>
+              <li>Apresentar a solução por módulos ou etapas.</li>
+              <li>Explicar o que está incluso e o que não está incluso.</li>
+              <li>Apresentar investimento.</li>
+              <li>Conduzir próximos passos e prazo de decisão.</li>
+            </ol>
+          </div>
+          <div class="card gold">
+            <h3>Script de abertura</h3>
+            <div class="script-box">
+              <p>“Antes de falarmos da proposta, queria recapitular os principais pontos que vocês trouxeram. Isso é importante porque a proposta precisa responder ao cenário real da empresa, não apenas a uma troca de contador.”</p>
+            </div>
+            <h3>Perguntas de fechamento</h3>
+            <ul>
+              <li>Faz sentido avançarmos nessa direção?</li>
+              <li>Você consegue enxergar valor nessa estrutura?</li>
+              <li>O que hoje impediria a empresa de seguir?</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('reuniao2')">Baixar roteiro da reunião 2 em PDF</button>
+        </div>
+      </section>
+
+      <section id="objecoes">
+        <div class="eyebrow">Defesa de valor</div>
+        <h2>Como responder objeções comuns</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Objeção do cliente</th><th>Resposta recomendada</th><th>Objetivo da resposta</th></tr></thead>
+            <tbody>
+              <tr><td>“Está caro.”</td><td>“Entendo. Para comparar corretamente, precisamos avaliar se estamos falando apenas de cumprimento de obrigações ou de uma contabilidade com acompanhamento, orientação e prevenção de riscos.”</td><td>Sair da comparação por preço.</td></tr>
+              <tr><td>“Meu contador cobra menos.”</td><td>“Pode fazer sentido. A pergunta é: o modelo atual está entregando a segurança, a organização e a previsibilidade que vocês precisam neste momento?”</td><td>Recolocar a conversa na dor.</td></tr>
+              <tr><td>“Manda a proposta por WhatsApp.”</td><td>“Eu posso enviar, mas para não virar apenas comparação de valor, prefiro te explicar rapidamente a lógica da proposta. Assim você entende exatamente o que está contratando.”</td><td>Evitar proposta fria.</td></tr>
+              <tr><td>“Vou pensar.”</td><td>“Claro. Para eu te acompanhar da forma certa: a dúvida está no investimento, no escopo ou no momento da empresa?”</td><td>Descobrir a objeção real.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-actions">
+          <button onclick="baixarPDF('objecoes')">Baixar respostas a objeções em PDF</button>
+        </div>
+      </section>
+
+      <section id="regras">
+        <div class="eyebrow">Conduta comercial</div>
+        <h2>Regras de ouro do atendimento</h2>
+        <div class="grid-2">
+          <div class="card danger">
+            <h3>Nunca</h3>
+            <ul>
+              <li>Entrar em preço antes de entender o cenário.</li>
+              <li>Enviar proposta consultiva sem reunião.</li>
+              <li>Prometer o que a operação não consegue entregar.</li>
+              <li>Falar mais do que o cliente.</li>
+              <li>Tratar cliente grande como cliente simples.</li>
+              <li>Tratar cliente pequeno como projeto complexo.</li>
+            </ul>
+          </div>
+          <div class="card success">
+            <h3>Sempre</h3>
+            <ul>
+              <li>Pedir permissão para fazer perguntas.</li>
+              <li>Registrar informações relevantes.</li>
+              <li>Classificar o lead.</li>
+              <li>Conduzir o próximo passo.</li>
+              <li>Defender valor com base em dor e risco.</li>
+              <li>Manter follow-up com prazo definido.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="kpis">
+        <div class="eyebrow">Gestão comercial</div>
+        <h2>Indicadores que precisam ser medidos</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Indicador</th><th>O que mede</th><th>Por que importa</th></tr></thead>
+            <tbody>
+              <tr><td>Leads recebidos</td><td>Volume de oportunidades</td><td>Mostra geração de demanda.</td></tr>
+              <tr><td>Leads qualificados</td><td>Quantidade com perfil real</td><td>Evita gastar energia com lead ruim.</td></tr>
+              <tr><td>Smart x Consultivo</td><td>Tipo de oportunidade</td><td>Ajuda a prever ticket e esforço comercial.</td></tr>
+              <tr><td>Reuniões agendadas</td><td>Conversão do contato inicial</td><td>Mede eficiência da abordagem.</td></tr>
+              <tr><td>Propostas enviadas</td><td>Produtividade comercial</td><td>Precisa ser comparado com fechamentos.</td></tr>
+              <tr><td>Taxa de fechamento</td><td>Propostas fechadas / enviadas</td><td>Mede qualidade da venda.</td></tr>
+              <tr><td>Ticket médio</td><td>Valor médio dos contratos</td><td>Mede rentabilidade da carteira.</td></tr>
+              <tr><td>Tempo até fechamento</td><td>Dias entre lead e decisão</td><td>Ajuda a ajustar follow-up.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="implantacao">
+        <div class="eyebrow">Próximos passos</div>
+        <h2>Plano de implantação do manual</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Primeira semana</h3>
+            <ol>
+              <li>Rodrigo treina o roteiro de ligação.</li>
+              <li>Equipe usa as perguntas em todos os novos leads.</li>
+              <li>Cada lead recebe classificação: Smart ou Consultivo.</li>
+              <li>Nenhuma proposta consultiva sai sem reunião.</li>
+              <li>Registrar perdas e objeções para melhoria do script.</li>
+            </ol>
+          </div>
+          <div class="card gold">
+            <h3>Padrão cultural</h3>
+            <p>O cliente não deve sentir que está falando com alguém que apenas “passa preço”. Ele precisa perceber método, segurança e organização.</p>
+            <div class="callout"><strong>Frase final:</strong> “Na Escrita Contabilidade, proposta não é chute. É consequência de diagnóstico.”</div>
+          </div>
+        </div>
+        <div class="footer-note">Manual desenvolvido para uso interno da Escrita Contabilidade. Ajuste os scripts conforme o perfil do cliente, mantendo a lógica: ouvir, diagnosticar, classificar, conduzir e propor.</div>
+      </section>
+    </main>
+  </div>
+
+<script>
+const scripts = {
+  ligacao: {
+    titulo: 'SCRIPT DE LIGAÇÃO - ESCRITA CONTABILIDADE',
+    conteudo: `ABERTURA\n\n"Olá, tudo bem? Aqui é o Rodrigo da Escrita Contabilidade.\n\nRecebi seu contato e, antes de te passar qualquer informação pronta, queria entender rapidamente o cenário da empresa para ver qual o melhor direcionamento para vocês. Pode ser?"\n\nOBJETIVO DA LIGAÇÃO\n- Criar conexão.\n- Entender o cenário.\n- Identificar se o cliente é Smart ou Consultivo.\n- Definir o próximo passo correto.\n\nEVITAR\n- Falar preço cedo.\n- Mandar tabela.\n- Enviar proposta sem contexto.\n- Deixar o cliente conduzir toda a conversa.`
+  },
+  perguntas: {
+    titulo: 'PERGUNTAS ESTRATÉGICAS DE QUALIFICAÇÃO',
+    conteudo: `CONTEXTO\n- Hoje quantos colaboradores a empresa possui?\n- Qual é a atividade principal da empresa?\n- Qual o regime tributário atual, se souber?\n- Vocês já possuem contabilidade atualmente?\n- O que motivou a busca por uma nova contabilidade agora?\n\nDOR\n- Qual é a maior dificuldade hoje: impostos, folha, financeiro, atendimento, rotina fiscal ou organização?\n- O que mais incomoda no atendimento atual?\n- Se isso continuar por mais 6 meses, qual impacto pode gerar?\n- O que precisa melhorar para você sentir segurança?\n\nMATURIDADE\n- Hoje a empresa trabalha organizada ou mais apagando incêndio?\n- Vocês recebem relatórios gerenciais ou apenas guias e obrigações?\n- Existe acompanhamento de indicadores financeiros?\n- Vocês têm previsibilidade tributária ou são surpreendidos no mês?\n\nDECISÃO\n- Quem normalmente participa da decisão sobre contabilidade?\n- Existe algum prazo importante para troca ou regularização?\n- Além do preço, o que será decisivo para escolher o escritório?`
+  },
+  direcionamento: {
+    titulo: 'DIRECIONAMENTO DO LEAD',
+    conteudo: `LEAD SMART\nSinais:\n- Empresa pequena.\n- Dor simples.\n- Baixa complexidade.\n- Busca proposta objetiva.\n\nScript:\n"Perfeito. Pelo que você me explicou, acredito que conseguimos montar algo mais direto e objetivo para vocês. Vou organizar as informações e te enviar uma proposta inicial para avaliação, tudo bem?"\n\nLEAD CONSULTIVO\nSinais:\n- Múltiplas dores.\n- Crescimento desorganizado.\n- Decisão com sócios ou diretoria.\n- Potencial maior de contrato.\n\nScript:\n"Pelo cenário que você me trouxe, acredito que antes de qualquer proposta pronta vale fazermos uma reunião de alinhamento. Assim entendemos melhor a operação e montamos algo realmente adequado para a empresa."`
+  },
+  reuniao1: {
+    titulo: 'ROTEIRO - REUNIÃO 1: ALINHAMENTO E DIAGNÓSTICO',
+    conteudo: `OBJETIVO\nEntender a empresa, aprofundar as dores e construir valor antes de falar de proposta.\n\nESTRUTURA\n1. História da empresa: atividade, momento atual e objetivos.\n2. Rotina contábil atual: o que funciona e o que não funciona.\n3. Financeiro e gestão: relatórios, previsibilidade, indicadores e tomada de decisão.\n4. Obrigações fiscais e folha: riscos, atrasos, dúvidas e retrabalho.\n5. Expectativa com a Escrita: resultado esperado, prazo e critério de sucesso.\n\nPERGUNTAS\n- Onde hoje a empresa mais perde dinheiro sem perceber?\n- Qual área mais preocupa atualmente?\n- O que mais gera desgaste operacional?\n- O que faria vocês dizerem que a troca valeu a pena?\n\nFECHAMENTO\n"Com base em tudo que levantamos hoje, vamos estruturar uma proposta alinhada ao cenário da empresa e marcar uma segunda reunião para apresentar as possibilidades com clareza."`
+  },
+  reuniao2: {
+    titulo: 'ROTEIRO - REUNIÃO 2: APRESENTAÇÃO DA PROPOSTA',
+    conteudo: `OBJETIVO\nApresentar a solução como resposta ao diagnóstico, não como tabela de preço.\n\nABERTURA\n"Antes de falarmos da proposta, queria recapitular os principais pontos que vocês trouxeram. Isso é importante porque a proposta precisa responder ao cenário real da empresa, não apenas a uma troca de contador."\n\nSEQUÊNCIA\n1. Relembrar dores.\n2. Mostrar riscos de manter o cenário atual.\n3. Apresentar solução por módulos ou etapas.\n4. Explicar o que está incluso e o que não está incluso.\n5. Apresentar investimento.\n6. Conduzir próximos passos.\n\nFECHAMENTO\n- Faz sentido avançarmos nessa direção?\n- Você consegue enxergar valor nessa estrutura?\n- O que hoje impediria a empresa de seguir?`
+  },
+  objecoes: {
+    titulo: 'RESPOSTAS A OBJEÇÕES COMERCIAIS',
+    conteudo: `OBJEÇÃO: "Está caro."\nResposta:\n"Entendo. Para comparar corretamente, precisamos avaliar se estamos falando apenas de cumprimento de obrigações ou de uma contabilidade com acompanhamento, orientação e prevenção de riscos."\n\nOBJEÇÃO: "Meu contador cobra menos."\nResposta:\n"Pode fazer sentido. A pergunta é: o modelo atual está entregando a segurança, a organização e a previsibilidade que vocês precisam neste momento?"\n\nOBJEÇÃO: "Manda a proposta por WhatsApp."\nResposta:\n"Eu posso enviar, mas para não virar apenas comparação de valor, prefiro te explicar rapidamente a lógica da proposta. Assim você entende exatamente o que está contratando."\n\nOBJEÇÃO: "Vou pensar."\nResposta:\n"Claro. Para eu te acompanhar da forma certa: a dúvida está no investimento, no escopo ou no momento da empresa?"`
+  }
+};
+
+function escreverTextoPDF(doc, texto, x, y, largura, alturaLinha) {
+  const linhas = doc.splitTextToSize(texto, largura);
+  let posY = y;
+  linhas.forEach(linha => {
+    if (posY > 280) {
+      doc.addPage();
+      posY = 20;
+    }
+    doc.text(linha, x, posY);
+    posY += alturaLinha;
+  });
+  return posY;
+}
+
+function capaPDF(doc, titulo) {
+  doc.setFillColor(11, 45, 92);
+  doc.rect(0, 0, 210, 34, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text('ESCRITA CONTABILIDADE', 14, 15);
+  doc.setFontSize(10);
+  doc.text('Manual Comercial e Atendimento', 14, 23);
+  doc.setTextColor(11, 45, 92);
+  doc.setFontSize(15);
+  doc.text(titulo, 14, 48);
+  doc.setDrawColor(185, 139, 29);
+  doc.setLineWidth(1);
+  doc.line(14, 53, 196, 53);
+  doc.setTextColor(16, 32, 51);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+}
+
+function baixarPDF(tipo) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('p', 'mm', 'a4');
+
+  if (tipo === 'todos') {
+    const chaves = ['ligacao', 'perguntas', 'direcionamento', 'reuniao1', 'reuniao2', 'objecoes'];
+    chaves.forEach((chave, index) => {
+      if (index > 0) doc.addPage();
+      capaPDF(doc, scripts[chave].titulo);
+      escreverTextoPDF(doc, scripts[chave].conteudo, 14, 65, 180, 6);
+    });
+    doc.save('manual-scripts-comerciais-escrita-contabilidade.pdf');
+    return;
+  }
+
+  capaPDF(doc, scripts[tipo].titulo);
+  escreverTextoPDF(doc, scripts[tipo].conteudo, 14, 65, 180, 6);
+  doc.save(scripts[tipo].titulo.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '.pdf');
+}
+</script>
+</body>
+</html>
